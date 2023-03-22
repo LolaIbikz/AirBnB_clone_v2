@@ -1,19 +1,27 @@
 #!/usr/bin/python3
-""" This is the city class. """
+"""
+    contains City class to represent a city
+    contains City class to represent a city
+"""
+
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String
-from sqlalchemy import ForeignKey
+from models.state import State
 from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, ForeignKey
+from os import environ
+
+storage_engine = environ.get("HBNB_TYPE_STORAGE")
 
 
 class City(BaseModel, Base):
-    """ This is the class for city
-    Attributes:
-        state_id = The state id
-        name: input name
-    """
-    __tablename__ = 'cities'
-    name = Column(String(128), nullable=False)
-    state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
-    places = relationship('Place', backref='cities',
-                          cascade='delete')
+    """ City class :City class to represent a city
+    City class :City class to represent a city"""
+
+    if (storage_engine == "db"):
+        __tablename__ = "cities"
+        state_id = Column(String(60), ForeignKey(State.id))
+        name = Column(String(128), nullable=False)
+        places = relationship("Place", backref="cities")
+    else:
+        name = ""
+        state_id = ""
