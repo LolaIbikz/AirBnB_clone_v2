@@ -1,30 +1,32 @@
 #!/usr/bin/python3
+"""starts a Flask web application"""
 
-from models import storage
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template
+import models
 
-app = Flask(__name__)
-
-
-@app.route("/states", strict_slashes=False)
-def states():
-    states = storage.all("State")
-    return render_template("9-states.html", state=states)
-
-
-@app.route("/states/<id>", strict_slashes=False)
-def states_id(id):
-    for state in storage.all("State").values():
-        if state.id == id:
-            return render_template("9-states.html", state=state)
-    return render_template("9-states.html")
+app = Flask("__name__")
 
 
 @app.teardown_appcontext
-def teardown(exc):
-    storage.close()
+def refresh(exception):
+        models.storage.close()
+
+
+@app.route("/states", strict_slashes=False)
+def route_states():
+        pep_fix = models.dummy_classes["State"]
+        data = models.storage.all(cls=pep_fix)
+        states = data.values()
+        return render_template('7-states_list.html', states_list=states)
+
+
+@app.route("/states/<id>", strict_slashes=False)
+def route_city():
+        pep_fix = models.dummy_classes["State"]
+        data = models.storage.all(cls=pep_fix)
+        states = data.values()
+        return render_template('8-cities_by_states.html', states_list=states)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+        app.run()
